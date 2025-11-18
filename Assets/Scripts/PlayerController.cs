@@ -1,9 +1,14 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.iOS;
+using UnityEngine.UI;
+using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
+    public Image jumpImage;
+    public TextMeshProUGUI scoreText;
     public float speed = 0;
 
     private Rigidbody rb;
@@ -12,11 +17,15 @@ public class PlayerController : MonoBehaviour
 
     private float jumpForce;
     private bool canJump = false;
+    private int score;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        score = 0;
+
+        SetScoreText();
     }
 
     void OnMove(InputValue movementValue)
@@ -25,6 +34,11 @@ public class PlayerController : MonoBehaviour
 
         movementX = movementVector.x;
         movementY = movementVector.y;
+    }
+
+    void SetScoreText()
+    {
+        scoreText.text = score.ToString();
     }
 
     void FixedUpdate()
@@ -36,13 +50,24 @@ public class PlayerController : MonoBehaviour
             if (canJump)
             {
                 canJump = false;
-                jumpForce = 15;
+                jumpForce = 20;
+
+                rb.linearVelocity = new Vector3 (rb.linearVelocity.x, 0, rb.linearVelocity.z);
             }
         }
 
         Vector3 movement = new Vector3(movementX, jumpForce, movementY);
 
         rb.AddForce(movement * speed);
+
+        if (canJump)
+        {
+            jumpImage.rectTransform.sizeDelta = new Vector2(10000000, jumpImage.rectTransform.sizeDelta.y);
+        }
+        else
+        {
+            jumpImage.rectTransform.sizeDelta = new Vector2(0, jumpImage.rectTransform.sizeDelta.y);
+        }
     }
 
     void OnTriggerEnter (Collider other) 
@@ -51,6 +76,9 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.CompareTag("Pickup")) 
         {    
             other.gameObject.SetActive(false);
+            score += 1;
+
+            SetScoreText();
         }
     }
 }
