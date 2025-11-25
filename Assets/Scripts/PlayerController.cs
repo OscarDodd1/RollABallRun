@@ -18,10 +18,16 @@ public class PlayerController : MonoBehaviour
     private float jumpForce;
     private bool canJump = false;
     private int score;
+    private Vector3 previousPosition;
+    private float distanceMovedThisFrame;
+    private float prevMovement = 0;
+    private float threshold = 0.5f;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        previousPosition = transform.position;
+
         rb = GetComponent<Rigidbody>();
         score = 0;
 
@@ -43,6 +49,16 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        distanceMovedThisFrame = Vector3.Distance(transform.position, previousPosition);
+        previousPosition = transform.position; // Update previous position for the next frame
+
+        if ((distanceMovedThisFrame - prevMovement) >= threshold)
+        {
+            Debug.Log("Passed Threshold");
+        }
+
+        prevMovement = distanceMovedThisFrame;
+
         jumpForce = 0;
 
         if (Input.GetKeyDown(KeyCode.Space))
