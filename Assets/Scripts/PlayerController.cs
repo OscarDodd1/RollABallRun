@@ -50,14 +50,18 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate()
     {
         distanceMovedThisFrame = Vector3.Distance(transform.position, previousPosition);
-        previousPosition = transform.position; // Update previous position for the next frame
+        previousPosition = transform.position;
 
-        if ((distanceMovedThisFrame - prevMovement) >= threshold)
+        float delta = distanceMovedThisFrame - prevMovement; // Positive if speeding up
+        Debug.Log(delta);
+
+        if (delta > threshold) // Passed threshold on increase
         {
             Debug.Log("Passed Threshold");
         }
 
         prevMovement = distanceMovedThisFrame;
+
 
         jumpForce = 0;
 
