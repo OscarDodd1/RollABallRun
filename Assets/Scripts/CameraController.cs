@@ -3,17 +3,19 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     public GameObject player;
-    private Vector3 offset;
+    public Vector3 offset;
+    public float smoothTime = 0.2f; // The time it takes to reach the target
+    private Vector3 velocity = Vector3.zero; // Used by SmoothDamp internally
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         offset = transform.position - player.transform.position;
     }
-
-    // Update is called once per frame
     void LateUpdate()
     {
-        transform.position = player.transform.position + offset;
+        if (player == null) return;
+
+        Vector3 desiredPosition = player.transform.position + offset;
+        transform.position = Vector3.SmoothDamp(transform.position, desiredPosition, ref velocity, smoothTime);
     }
 }
